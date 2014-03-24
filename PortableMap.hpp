@@ -21,7 +21,7 @@
 #include <string.h>
 #include <sstream>
 
-#include "Message.hpp"
+#include "Logger.hpp"
 
 class PortableMap {
 public:
@@ -159,7 +159,7 @@ public:
     // process filename
     FILE * fp = fopen(filename.c_str(), "r");
     if ( !fp ) {
-      WARNV("File read failed: %s", strerror(errno));
+      WARN("File read failed: %s", strerror(errno));
       return;
     }
     setFilename(filename);
@@ -205,7 +205,7 @@ public:
         WARN("Invalid max value!");
         fclose(fp);return;
       } else if ( _identifier > P3 && m > 255 ) {
-        WARNV("Invalid max value in binary file! (m=%d)", m);
+        WARN("Invalid max value in binary file! (m=%d)", m);
         fclose(fp);return;
       }
       setMaxValue(m);
@@ -233,7 +233,7 @@ public:
     if ( _identifier < P4 ) // ascii format, need conversion
     {
       if ( _maxVal > 255 ) {
-        WARNV("Invalid max value in binary file! (m=%ld)", _maxVal);
+        WARN("Invalid max value in binary file! (m=%ld)", _maxVal);
         return;
       }
       setIdentifier((MAGIC_NUMBER)((int)_identifier+3));
@@ -289,7 +289,7 @@ private:
     // open file to write
     FILE * fp = fopen(filename.c_str(), "w");
     if ( !fp ) {
-      WARNV("File write failed: %s", strerror(errno));
+      WARN("File write failed: %s", strerror(errno));
       return;
     }
 
@@ -308,7 +308,7 @@ private:
     if ( _width > 0 && _height > 0 ) {
       fprintf(fp, "%ld %ld\n", _width, _height);
     } else {
-      WARNV("Invalid width or height! (width=%ld, height=%ld)", _width, _height);
+      WARN("Invalid width or height! (width=%ld, height=%ld)", _width, _height);
       fclose(fp);return;
     }
 
@@ -316,7 +316,7 @@ private:
     if ( _identifier != P1 && _identifier != P4 && _maxVal > 0 ) {
       fprintf(fp, "%ld\n", _maxVal);
     } else if ( _maxVal <= 0 ) {
-      WARNV("Invalid max value! (maxVal=%ld)", _maxVal);
+      WARN("Invalid max value! (maxVal=%ld)", _maxVal);
       fclose(fp);return;
     }
     writeMap(fp);
@@ -545,7 +545,7 @@ private:
         token = getNextToken(fp, _identifier==P1);
         int v = str2int(token);
         if ( v < 0 ) {
-          WARNV("Invalid pixel value! (%ld th value is %d)", rT, v);
+          WARN("Invalid pixel value! (%ld th value is %d)", rT, v);
           return;
         }
         _ascii[rT] = (SizeType)v;
